@@ -65,29 +65,29 @@ async function main() {
       return;
     }
 
-    // For other contracts, use constructor args from deployments json.
-    if (!fs.existsSync(deployedFilePath)) {
-      console.error(
-        `Missing deployments file: ${deployedFilePath}\n` +
-          "Run deploy first so we can store constructor args."
-      );
-      process.exit(1);
-    }
-
-    const deployment = JSON.parse(fs.readFileSync(deployedFilePath, "utf8"));
-    const info = (deployment.contracts || {})[contractName];
-    if (!info || !info.constructorArgs) {
-      console.error(
-        `No deployment entry found for "${contractName}" in ${deployedFilePath}. ` +
-          "Run deploy first."
-      );
-      process.exit(1);
+    // Other contracts: constructor args from CONSTRUCTOR_ARGS_JSON, deployments file, or [] (no-arg deploys).
+    const constructorArgsJson =
+      process.env.CONSTRUCTOR_ARGS_JSON || getArgValue("--constructor-args-json");
+    let constructorArgs = [];
+    if (constructorArgsJson) {
+      try {
+        constructorArgs = JSON.parse(constructorArgsJson);
+      } catch (e) {
+        console.error("Failed to parse CONSTRUCTOR_ARGS_JSON:", e);
+        process.exit(1);
+      }
+    } else if (fs.existsSync(deployedFilePath)) {
+      const deployment = JSON.parse(fs.readFileSync(deployedFilePath, "utf8"));
+      const info = (deployment.contracts || {})[contractName];
+      if (info && Array.isArray(info.constructorArgs)) {
+        constructorArgs = info.constructorArgs;
+      }
     }
 
     console.log(`Verifying ${contractName}:`, contractAddress);
     await hre.run("verify:verify", {
       address: contractAddress,
-      constructorArguments: info.constructorArgs || [],
+      constructorArguments: constructorArgs,
     });
     return;
   }
@@ -95,8 +95,10 @@ async function main() {
   if (!fs.existsSync(deployedFilePath)) {
     console.error(
       `Missing deployments file: ${deployedFilePath}\n` +
-        "Run deploy first (e.g. `npx hardhat run scripts/deploy.js --network fuji`) " +
-      "or set CONTRACT_NAME/CONTRACT_ADDRESS."
+        "1) Deploy first, then verify (creates this file):\n" +
+        "   export CONTRACT_NAME=Intro && pnpm run deploy:fuji\n" +
+        "2) Or verify by address (no file needed for no-arg contracts):\n" +
+        "   export CONTRACT_NAME=Intro CONTRACT_ADDRESS=0x... && pnpm run verify:fuji\n"
     );
     process.exit(1);
   }

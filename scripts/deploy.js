@@ -8,8 +8,20 @@ function ensureDirSync(dirPath) {
 }
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  const signers = await hre.ethers.getSigners();
+  const deployer = signers[0];
   const networkName = hre.network.name;
+
+  if (!deployer) {
+    console.error(
+      "No deployer wallet found for this network.\n" +
+        "For Fuji or Avalanche mainnet, add your wallet private key to `.env`:\n" +
+        "  PRIVATE_KEY=0x...   (or without 0x — both work)\n" +
+        "Never commit `.env` or share your key.\n" +
+        "Fund the wallet with AVAX on that network for gas (Fuji: use the testnet faucet)."
+    );
+    process.exit(1);
+  }
 
   console.log("Deploying with account:", deployer.address);
   console.log(

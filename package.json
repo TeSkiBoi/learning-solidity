@@ -5,6 +5,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:intro": "hardhat test --grep Intro",
     "deploy:fuji": "hardhat run scripts/deploy.js --network fuji",
     "deploy:mainnet": "hardhat run scripts/deploy.js --network avalanche",
     "verify:fuji": "hardhat run scripts/verify.js --network fuji",

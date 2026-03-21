@@ -6,5 +6,9 @@ pragma solidity ^0.8.20;
  * @dev Minimal contract: your first Solidity program on Avalanche
  */
 contract Intro {
-    // Empty contract — compiles and deploys. Start here!
+    string public constant helloWorld = "Hello World";
+
+    function sayHello() external pure returns (string memory) {
+        return "Hello World";
+    }
 }

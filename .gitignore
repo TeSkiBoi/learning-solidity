@@ -1,10 +1,33 @@
-node_modules
-.env
-coverage
-coverage.json
-typechain
-typechain-types
-cache
-artifacts
+# Dependencies
+node_modules/
+
+# Secrets — never commit keys (template stays tracked)
+.env*
+!.env.example
+
+# Hardhat / Solidity
+cache/
+artifacts/
+typechain/
+typechain-types/
+deployments/
+
+# Logs
 *.log
-deployments
+.pnpm-debug.log*
+
+# Coverage
+coverage/
+coverage.json
+
+# OS & editors
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+*~
+
+# Optional: uncomment if you add these tools
+# .vscode/
+# *.pem
