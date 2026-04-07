@@ -4,6 +4,7 @@ node_modules/
 # Secrets — never commit keys (template stays tracked)
 .env*
 !.env.example
+.env
 
 # Hardhat / Solidity
 cache/
